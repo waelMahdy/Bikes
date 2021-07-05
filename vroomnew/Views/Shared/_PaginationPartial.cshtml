@@ -1,0 +1,19 @@
+﻿
+<div class="position-sticky">
+    <cs-pager cs-paging-pagenumber="@Model.PageNumber"
+              cs-paging-totalitems="@Model.TotalItems"
+              cs-paging-pagesize="@Model.PageSize"
+              cs-pagenumber-param="pagenumber"              
+              asp-route-sortOrder="@ViewBag.CurrentSOrtOrder"             
+              asp-route-searchString="@ViewBag.CurrentsearchString"             
+              asp-controller=@ViewData["Controller"] 
+              asp-action=@ViewData["Action"] 
+              cs-pager-li-current-class="page-item active"
+              cs-pager-li-other-class="page-item"
+              cs-pager-li-non-active-class="page-item disabled"
+              cs-pager-link-current-class="page-link"
+              cs-pager-link-other-class="page-link">
+
+    </cs-pager>
+    <p class="text-secondary text-right">Total Items: @Model.TotalItems Bikes</p>
+</div>

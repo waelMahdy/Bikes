@@ -1,0 +1,155 @@
+﻿@model vroomnew.Models.ViewModels.BikeViewModel
+@using vroomnew.Extensions
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create a bike</h1>
+
+
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <form method="post" asp-action="CreatePost" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group" >
+                <label asp-for="Bike.MakeID" class="control-label">Makes</label>
+                <select asp-for="Bike.MakeID" class="form-control" asp-items="Model.Makes.ToSelectListItems()" id="Make"></select>
+                <span asp-validation-for="Bike.MakeID" class="text-danger"></span>
+
+            </div>
+            <div class="form-group row">
+                <div class="col-md-auto">
+                    <label asp-for="Bike.ImagePath" class="control-label">Image</label>
+                    <input type="file" id="imageUpload" asp-for="Bike.ImagePath" class="form-control-file" accept=".png,.gif,.jpg,.jpeg" />
+                    <span asp-validation-for="Bike.ImagePath" class="text-danger"></span>
+                </div>
+                <div class="col-md-5 text-right">
+                    <img src="@Model.Bike.ImagePath" id="imageThumb" class="img-thumbnail img-fluid" style="visibility:hidden;" />
+                </div>
+            </div>
+            <div class="form-group" >
+                <label asp-for="Bike.ModelID" class="control-label">Model</label>
+                <select asp-for="Bike.ModelID" class="form-control" asp-items="Model.Models.ToSelectListItems()" id="Model">
+                {
+
+                }</select>
+                <span asp-validation-for="Bike.ModelID" class="text-danger"></span>
+
+            </div>
+            <div class="form-group">
+                <label asp-for="Bike.Year" class="control-label"></label>
+                <input asp-for="Bike.Year" class="form-control" />
+                <span asp-validation-for="Bike.Year" class="text-danger"></span>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-3">
+                    <label asp-for="Bike.Price" class="control-label"></label>
+                    <input asp-for="Bike.Price" class="form-control" />
+                    <span asp-validation-for="Bike.Price" class="text-danger"></span>
+                </div>
+                <div class="col-md-5">
+                    <label asp-for="Bike.Currency" class="control-label"></label>
+                    <select asp-for="Bike.Currency" class="form-control" asp-items="Model.Currencies.ToSelectListItems()"></select>
+                    <span asp-validation-for="Bike.Currency" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group ">
+                <label asp-for="Bike.Mileage" class="control-label"></label>
+                <input asp-for="Bike.Mileage" class="form-control" />
+                <span asp-validation-for="Bike.Mileage" class="text-danger"></span>
+            </div>
+            <div class="form-group" >
+                <label asp-for="Bike.Features" class="control-label"></label>
+                <input asp-for="Bike.Features" class="form-control" />
+                <span asp-validation-for="Bike.Features" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Bike.SellerName" class="control-label"></label>
+                <input asp-for="Bike.SellerName" class="form-control" />
+                <span asp-validation-for="Bike.SellerName" class="text-danger"></span>
+            </div>
+            <div class="form-group" >
+                <label asp-for="Bike.SellerEmail" class="control-label"></label>
+                <input asp-for="Bike.SellerEmail" class="form-control" />
+                <span asp-validation-for="Bike.SellerEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Bike.SellerPhone" class="control-label"></label>
+                <input asp-for="Bike.SellerPhone" class="form-control" />
+                <span asp-validation-for="Bike.SellerPhone" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+}
+}
+<script>
+
+
+    $("#imageUpload").change(function () {
+              
+        var input = this;
+        var url = $(this).val();
+        var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
+        if (input.files && input.files[0] && (ext == "gif" || ext == "png" || ext == "jpeg" || ext == "jpg")) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#imageThumb').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        } else
+        {
+            alert("Only accept .jpg, .gif, .png or .jpeg");
+            return;
+        }
+        $("#imageThumb").css("visibility", "visible");
+
+    });
+
+    $(document).ready(function () {
+        var MakeDDL = $("#Make");
+        var ModelDDL = $("#Model");
+        ModelDDL.prop('disabled', true);
+
+        MakeDDL.change(function () {
+            if ($(this).val() == '0') {
+                ModelDDL.prop('disabled', true);
+                ModelDDL.val("0");
+            } else
+            {
+                $.ajax
+                    ({
+                        url: "/api/models/" + $(this).val(),
+                        method: "get"
+
+                    }).done(function (data) {
+                        ModelDDL.prop('disabled', false);
+                        ModelDDL.empty();
+                        ModelDDL.append($('<option/>', { value: '0', text: '----Select Model----' }));
+                        $(data).each(function (index, item) {
+                            ModelDDL.append($('<option/>', { value: item.id, text: item.name }));
+
+                        })
+                    });
+            }
+        });
+    });
+      
+</script>
+
